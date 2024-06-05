@@ -15,43 +15,47 @@ public class Postfija {
         return -1;
     }
     public String convertir(String expresion) {
-        String resultado="";
-        Stack<Character> stack = new Stack<>();
+    String resultado = "";
+    Stack<Character> stack = new Stack<>();
 
-        for (int i = 0; i < expresion.length(); i++) {
-            char c = expresion.charAt(i);
-            
-            if (Character.isLetterOrDigit(c)) {
-                resultado += c;
+    for (int i = 0; i < expresion.length(); i++) {
+        char c = expresion.charAt(i);
+
+        if (Character.isLetterOrDigit(c)) {
+            resultado += c;
+        } else if (c == '(') {
+            stack.push(c);
+        } else if (c == ')') {
+            while (!stack.isEmpty() && stack.peek() != '(') {
+                resultado += stack.pop();
             }
-            else if (c == '(') {
-                stack.push(c);
+            if (!stack.isEmpty() && stack.peek() == '(') {
+                stack.pop(); // Quita el paréntesis de apertura de la pila
+            } else {
+                // Maneja el caso de paréntesis desequilibrados
+                return "Expresión no válida: paréntesis desequilibrados";
             }
-            else if (c == ')') {
-                while (!stack.isEmpty() && stack.peek() != '(') {
-                    resultado += stack.pop();
-                }
-                if (!stack.isEmpty() && stack.peek() != '(') {
-                   
-                } else {
-                    stack.pop();
-                }
-            } else { 
-                while (!stack.isEmpty() && precedencia(c) <= precedencia(stack.peek())) {
-                    resultado += stack.pop();
-                }
-                stack.push(c);
-                
+        } else {
+            // Procesamiento de operadores
+            while (!stack.isEmpty() && precedencia(c) <= precedencia(stack.peek())) {
+                resultado += stack.pop();
             }
+            stack.push(c);
         }
-        while (!stack.isEmpty()) {
-            if (stack.peek() == '(')
-                 
-            resultado += stack.pop();
-      
+    }
+
+    // Agrega cualquier operador restante en la pila al resultado
+    while (!stack.isEmpty()) {
+        if (stack.peek() == '(' || stack.peek() == ')') {
+            // Maneja el caso de paréntesis desequilibrados
+            return "Expresión no válida: paréntesis desequilibrados";
         }
-            return resultado;
-        }
+        resultado += stack.pop();
+    }
+
+    return resultado;
+    }
+  
         public String tabular(String expresion) {
             String resultado="", tabla = "";
             Stack<Character> stack = new Stack<>();
